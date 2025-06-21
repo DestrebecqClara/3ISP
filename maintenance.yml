@@ -1,0 +1,7 @@
+- name: Maintenance
+  hosts: all
+  become: true
+  tasks:
+    - apt:
+        update_cache: true
+        upgrade: dist
