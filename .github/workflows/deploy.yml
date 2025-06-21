@@ -1,4 +1,4 @@
-name: Déploiement avec Ansible
+name: "Déploiement avec Ansible"
 
 on:
   workflow_dispatch:
@@ -8,13 +8,20 @@ on:
 
 jobs:
   deploy:
-    name: Déploiement Service
+    name: "Déploiement Service"
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v3
-      - run: |
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Création de l'environnement virtuel + Ansible
+        run: |
           python3 -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
+
+      - name: Exécution du playbook Ansible
+        run: |
+          source .venv/bin/activate
           ansible-playbook -i inventory.yml deploy.yml
