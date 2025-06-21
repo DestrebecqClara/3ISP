@@ -1,0 +1,71 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+  query_log_file: /prometheus/query.log
+
+scrape_configs:
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets:
+          - 192.168.27.130:9100  # Load Balancer 1
+          - 192.168.27.133:9100  # Load Balancer 2
+          - 192.168.27.131:9100  # Wordpress
+          - 192.168.27.132:9100  # PrestaShop
+          - 192.168.27.134:9100  # MySQL
+
+  - job_name: 'blackbox_specif'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://192.168.27.131/  # Wordpress
+          - http://192.168.27.132/eshop  # PrestaShop
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'mysql_exporter'
+    static_configs:
+      - targets:
+          - 192.168.27.134:9104
+
+  - job_name: 'keepalived'
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - 192.168.27.130:9165  # LB1
+          - 192.168.27.133:9165  # LB2
+
+  - job_name: 'nginx'
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - 192.168.27.130:9113  # LB1
+          - 192.168.27.133:9113  # LB2
+
+  - job_name: 'apache'
+    static_configs:
+      - targets:
+          - 192.168.27.131:9117 # Wordpress
+          - 192.168.27.132:9117 # Prestashop
+
+  - job_name: 'blackbox-vip'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://192.168.27.129/eshop
+          - http://192.168.27.129/
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115

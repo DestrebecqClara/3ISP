@@ -1,0 +1,60 @@
+- name: Créer un utilisateur système pour node_exporter
+  user:
+    name: "{{ node_exporter_user }}"
+    shell: /usr/sbin/nologin
+    system: yes
+    create_home: no
+
+- name: Télécharger node_exporter
+  get_url:
+    url: "{{ node_exporter_download_url }}"
+    dest: "/tmp/node_exporter.tar.gz"
+    mode: '0644'
+
+- name: Vérifier si node_exporter est déjà extrait
+  stat:
+    path: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
+  register: node_exporter_extracted
+
+- name: Extraire l'archive node_exporter
+  unarchive:
+    src: "/tmp/node_exporter.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+  when: not node_exporter_extracted.stat.exists
+
+- name: Déplacer le binaire node_exporter dans le dossier d'installation
+  command: >
+    mv /tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter {{ node_exporter_install_dir }}/node_exporter
+  args:
+    creates: "{{ node_exporter_install_dir }}/node_exporter"
+
+- name: S'assurer des bons droits sur le binaire node_exporter
+  file:
+    path: "{{ node_exporter_install_dir }}/node_exporter"
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Créer le fichier de service systemd
+  copy:
+    dest: /etc/systemd/system/node_exporter.service
+    content: |
+      [Unit]
+      Description=Node Exporter
+      After=network.target
+      
+      [Service]
+      ExecStart={{ node_exporter_install_dir }}/node_exporter
+      Restart=always
+      User={{ node_exporter_user }}
+      
+      [Install]
+      WantedBy=multi-user.target
+  register: node_exporter_unit
+
+- name: Redémarrer node_exporter si le service a été modifié
+  systemd:
+    name: node_exporter
+    state: restarted
+  when: node_exporter_unit.changed

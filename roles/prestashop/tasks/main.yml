@@ -1,0 +1,5 @@
+- name: install prestashop
+  include_tasks: prestashop.yml
+
+- name: deploy vhost
+  include_tasks: virtualhost.yml

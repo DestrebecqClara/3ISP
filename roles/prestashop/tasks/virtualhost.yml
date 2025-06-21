@@ -1,0 +1,23 @@
+- template:
+    src: prestashop.conf.j2
+    dest: /etc/apache2/sites-available/prestashop.conf
+    mode: '0644'
+  notify: restart apache2
+
+- command: a2ensite prestashop
+  args:
+    creates: /etc/apache2/sites-enabled/prestashop.conf
+  notify: restart apache2
+
+- command: a2dissite 000-default
+  args:
+    removes: /etc/apache2/sites-enabled/000-default.conf
+  notify: restart apache2
+
+- command: a2enmod rewrite
+  notify: restart apache2
+
+- service:
+    name: apache2
+    state: started
+    enabled: true

@@ -1,0 +1,53 @@
+monitoring_bin_dir: /usr/local/bin
+monitoring_tmp_dir: /tmp/monitoring_exporters
+
+exporter_arch: "linux-amd64"
+
+prometheus_version: "2.51.2"
+prometheus_config_path: /etc/prometheus
+prometheus_data_dir: /var/lib/prometheus
+grafana_version: "10.4.2"
+prometheus_dir: /opt/prometheus
+
+exporter_ports:
+  node_exporter: 9100
+  nginx_exporter: 9113
+  apache_exporter: 9117
+  mysql_exporter: 9104
+  keepalived_exporter: 9165
+  blackbox_exporter: 9115
+#
+#exporters:
+#  node_exporter:
+#    version: "1.8.1"
+#    url: "https://github.com/prometheus/node_exporter/releases/download/v{{ exporters.node_exporter.version }}/node_exporter-{{ exporters.node_exporter.version }}.{{ exporter_arch }}.tar.gz"
+#
+#  apache_exporter:
+#    version: "0.11.0"
+#    url: "https://github.com/Lusitaniae/apache_exporter/releases/download/v{{ exporters.apache_exporter.version }}/apache_exporter-{{ exporters.apache_exporter.version }}.{{ exporter_arch }}.tar.gz"
+#
+#  nginx_exporter:
+#    version: "1.4.1"
+#    url: "https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/v{{ exporters.nginx_exporter.version }}/nginx-prometheus-exporter_{{ exporters.nginx_exporter.version }}_{{ exporter_arch }}.tar.gz"
+#
+#  mysql_exporter:
+#    version: "0.15.0"
+#    url: "https://github.com/prometheus/mysqld_exporter/releases/download/v{{ exporters.mysql_exporter.version }}/mysqld_exporter-{{ exporters.mysql_exporter.version }}.{{ exporter_arch }}.tar.gz"
+#
+#  keepalived_exporter:
+#    version: "1.3.0"
+#    url: "https://github.com/mehdy/keepalived-exporter/releases/download/v{{ exporters.keepalived_exporter.version }}/keepalived-exporter-{{ exporters.keepalived_exporter.version }}.{{ exporter_arch }}.tar.gz"
+#
+#  blackbox_exporter:
+#    version: "0.24.0"
+#    url: "https://github.com/prometheus/blackbox_exporter/releases/download/v{{ exporters.blackbox_exporter.version }}/blackbox_exporter-{{ exporters.blackbox_exporter.version }}.{{ exporter_arch }}.tar.gz"
+
+mysql_exporter_user: root
+mysql_exporter_password: password
+mysql_exporter_host: 127.0.0.1
+mysql_exporter_port: 3306
+
+nginx_stub_status_port: 8080
+nginx_stub_status_path: /stub_status
+
+blackbox_exporter_listen_address: ":{{ exporter_ports.blackbox_exporter }}"

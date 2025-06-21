@@ -1,0 +1,41 @@
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 768;
+}
+
+http {
+    upstream wp_backend {
+    server {{ wordpress_ip }};
+}
+
+upstream ps_backend {
+    server {{ prestashop_ip }};
+}
+
+server {
+    listen 80;
+
+    server_name monitoring_project.lan;
+
+    access_log /var/log/nginx/monitoring_project_access.log;
+    error_log /var/log/nginx/monitoring_project_error.log;
+
+        location / {
+            proxy_pass http://wp_backend;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /eshop {
+            proxy_pass http://ps_backend;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_redirect http://ps_backend/ http://$host/eshop/;
+        }
+    }
+}

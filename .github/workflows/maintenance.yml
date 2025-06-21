@@ -1,0 +1,19 @@
+name: Maintenance
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+
+jobs:
+  deploy:
+    name: Maintenance
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+          ansible-lint maintenance.yml
+          ansible-playbook -i inventory.yml maintenance.yml

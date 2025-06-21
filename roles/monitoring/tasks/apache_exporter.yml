@@ -1,0 +1,23 @@
+- name: Download apache_exporter
+  get_url:
+    url: "https://github.com/Lusitaniae/apache_exporter/releases/download/v0.11.0/apache_exporter-0.11.0.linux-amd64.tar.gz"
+    dest: /tmp/apache_exporter.tar.gz
+
+- name: Extract apache_exporter
+  unarchive:
+    src: /tmp/apache_exporter.tar.gz
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Create systemd unit for apache_exporter
+  template:
+    src: apache_exporter.service.j2
+    dest: /etc/systemd/system/apache_exporter.service
+  notify: restart apache_exporter
+
+- name: Start apache_exporter
+  systemd:
+    name: apache_exporter
+    enabled: true
+    state: started

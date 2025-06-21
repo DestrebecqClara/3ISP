@@ -1,0 +1,38 @@
+#- name: install docker
+#  include_tasks: docker.yml
+#  when: "'monitoring' in group_names"
+#
+#- name: install monitoring
+#  include_tasks: monitoring.yml
+#  when: "'monitoring' in group_names"
+#
+#- name: install node_exporter
+#  include_tasks: node_exporter.yml
+#
+
+- name: Install Docker (only on monitoring node)
+  include_tasks: docker.yml
+  when: "'monitoring' in group_names"
+
+- name: Install Prometheus and Grafana stack
+  include_tasks: monitoring.yml
+  when: "'monitoring' in group_names"
+
+- name: Install node_exporter on all hosts
+  include_tasks: node_exporter.yml
+
+- name: Install apache_exporter on Wordpress and Prestashop
+  include_tasks: apache_exporter.yml
+  when: "'wordpress' in group_names or 'prestashop' in group_names"
+
+- name: Install nginx_exporter on Load Balancers
+  include_tasks: nginx_exporter.yml
+  when: "'loadbalancers' in group_names"
+
+- name: Install mysql_exporter on Database
+  include_tasks: mysql_exporter.yml
+  when: "'database' in group_names"
+
+- name: Install keepalived_exporter on Load Balancers
+  include_tasks: keepalived_exporter.yml
+  when: "'loadbalancers' in group_names"

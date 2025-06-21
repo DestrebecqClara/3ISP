@@ -1,0 +1,6 @@
+prestashop_db_name: prestashop
+prestashop_db_user: ps_user
+prestashop_install_dir: /var/www/html/eshop
+prestashop_db_password: ps_password
+prestashop_site_url: http://prestashop.lan/eshop
+prestashop_install_path: /var/www/html

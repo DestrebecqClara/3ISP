@@ -1,0 +1,10 @@
+[Unit]
+Description=Apache Prometheus Exporter
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/apache_exporter --telemetry.address=:9117 --telemetry.endpoint=/metrics
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

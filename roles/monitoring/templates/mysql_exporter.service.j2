@@ -1,0 +1,13 @@
+[Unit]
+Description=MySQL Exporter for Prometheus
+After=network.target
+
+[Service]
+User=nobody
+Group=nogroup
+Type=simple
+ExecStart=/usr/local/bin/mysqld_exporter --config.my-cnf /root/.my.cnf
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

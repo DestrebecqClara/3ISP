@@ -1,0 +1,10 @@
+[Unit]
+Description=Keepalived Exporter
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/keepalived-exporter --web.listen-address=:9165
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

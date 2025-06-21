@@ -1,0 +1,35 @@
+all:
+  vars:
+    ansible_user: clara
+    ansible_password: clara
+    ansible_become_password: clara
+
+  children:
+    monitoring:
+      hosts:
+        mntg1:
+          ansible_host: 192.168.27.150
+
+    loadbalancers:
+      hosts:
+        lb1:
+          ansible_host: 192.168.27.154
+        lb2:
+          ansible_host: 192.168.27.155
+
+    wordpress:
+      hosts:
+        wp1:
+          ansible_host: 192.168.27.156
+
+    prestashop:
+      hosts:
+        ps1:
+          ansible_host: 192.168.27.157
+
+    database:
+      hosts:
+        db1:
+          ansible_host: 192.168.27.158
+
+

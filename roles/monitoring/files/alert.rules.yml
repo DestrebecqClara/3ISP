@@ -1,0 +1,152 @@
+#groups:
+#  - name: infrastructure_alerts
+#    rules:
+#
+#      - alert: WebsiteDown
+#        expr: up{job="website_monitoring"} == 0 or probe_http_status_code{job="website_monitoring"} != 200
+#        for: 3m
+#        labels:
+#          severity: critical
+#        annotations:
+#          title: "[ERREUR] Site web injoignable – {{ $labels.instance }}"
+#          description: "Le site {{ $labels.instance }} (job : {{ $labels.job }}) ne répond plus depuis plus de 3 minutes."
+#
+#      - alert: NginxDown
+#        expr: nginx_up{job="nginx_exporter"} == 0
+#        for: 1m
+#        labels:
+#          severity: critical
+#        annotations:
+#          title: "[ERREUR] Nginx inactif – {{ $labels.instance }}"
+#          description: "Le service Nginx est injoignable sur l'instance {{ $labels.instance }}."
+#
+#      - alert: MysqlDown
+#        expr: mysql_up{job="mysql_exporter"} == 0
+#        for: 1m
+#        labels:
+#          severity: critical
+#        annotations:
+#          title: "[ERREUR] MySQL inactif – {{ $labels.instance }}"
+#          description: "Le service MySQL ne répond plus sur l'instance {{ $labels.instance }}."
+#
+#      - alert: KeepalivedDown
+#        expr: keepalived_up{job="keepalived_exporter"} == 0
+#        for: 1m
+#        labels:
+#          severity: critical
+#        annotations:
+#          title: "[ERREUR] Keepalived inactif – {{ $labels.instance }}"
+#          description: "Le service Keepalived est injoignable sur l'instance {{ $labels.instance }}."
+#
+#      - alert: ApacheDown
+#        expr: apache_up{job="apache_exporter"} == 0
+#        for: 1m
+#        labels:
+#          severity: critical
+#        annotations:
+#          title: "[ERREUR] Apache inactif – {{ $labels.instance }}"
+#          description: "Le service Apache est injoignable sur l'instance {{ $labels.instance }}."
+#
+#      - alert: LowDiskSpace
+#        expr: (node_filesystem_avail_bytes{job="node_exporter"} / node_filesystem_size_bytes{job="node_exporter"}) * 100 < 10
+#        for: 5m
+#        labels:
+#          severity: critical
+#        annotations:
+#          title: "[ERREUR] Espace disque faible – {{ $labels.instance }}"
+#          description: "L’espace disque est inférieur à 10% sur {{ $labels.instance }} (point de montage : {{ $labels.mountpoint }})."
+
+
+groups:
+  - name: infrastructure_alerts
+    rules:
+
+      - alert: TargetDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          title: "[ALERTE] Cible Prometheus injoignable – {{ $labels.instance }}"
+          description: "La cible {{ $labels.instance }} (job: {{ $labels.job }}) ne répond plus depuis 2 minutes."
+
+      - alert: WebsiteDown
+        expr: up{job="website_monitoring"} == 0 or probe_http_status_code{job="website_monitoring"} != 200
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          title: "[ERREUR] Site web injoignable – {{ $labels.instance }}"
+          description: "Le site {{ $labels.instance }} (job : {{ $labels.job }}) ne répond plus depuis plus de 3 minutes."
+
+      - alert: NodeExporterMissing
+        expr: absent(up{job="node_exporter"} == 1)
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          title: "[ALERTE] node_exporter absent"
+          description: "Le node_exporter n’est pas exposé ou ne remonte plus d’informations sur une ou plusieurs cibles."
+
+      - alert: ApacheDown
+        expr: apache_up{job="apache_exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          title: "[ERREUR] Apache inactif – {{ $labels.instance }}"
+          description: "Le service Apache est injoignable sur l'instance {{ $labels.instance }}."
+
+      - alert: NginxDown
+        expr: nginx_up{job="nginx_exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          title: "[ERREUR] Nginx inactif – {{ $labels.instance }}"
+          description: "Le service Nginx est injoignable sur l'instance {{ $labels.instance }}."
+
+      - alert: MysqlDown
+        expr: mysql_up{job="mysql_exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          title: "[ERREUR] MySQL inactif – {{ $labels.instance }}"
+          description: "Le service MySQL ne répond plus sur l'instance {{ $labels.instance }}."
+
+      - alert: KeepalivedDown
+        expr: keepalived_up{job="keepalived_exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          title: "[ERREUR] Keepalived inactif – {{ $labels.instance }}"
+          description: "Le service Keepalived est injoignable sur l'instance {{ $labels.instance }}."
+
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          title: "[ERREUR] Espace disque faible – {{ $labels.instance }}"
+          description: "L’espace disque est inférieur à 10% sur {{ $labels.instance }} (point de montage : {{ $labels.mountpoint }})."
+
+      - alert: HighCpuUsage
+        expr: avg(rate(node_cpu_seconds_total{mode="user"}[2m])) by (instance) > 0.8
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          title: "[ALERTE] CPU élevé – {{ $labels.instance }}"
+          description: "L'utilisation CPU utilisateur est supérieure à 80% sur {{ $labels.instance }}."
+
+      - alert: LowMemoryAvailable
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) < 0.15
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          title: "[ALERTE] Mémoire faible – {{ $labels.instance }}"
+          description: "La mémoire disponible est inférieure à 15% sur {{ $labels.instance }}."

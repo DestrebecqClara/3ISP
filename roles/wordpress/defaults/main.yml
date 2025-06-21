@@ -1,0 +1,4 @@
+wordpress_install_path: /var/www/wordpress
+wordpress_site_url: http://wordpress.lan
+wordpress_db_name: wordpress
+wordpress_db_user: wp_user

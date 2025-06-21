@@ -1,0 +1,80 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+  query_log_file: /prometheus/query.log
+
+scrape_configs:
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets:
+{% for host in groups['loadbalancers'] %}
+          - {{ hostvars[host].ansible_host }}:9100  # {{ host }}
+{% endfor %}
+{% for host in groups['wordpress'] %}
+          - {{ hostvars[host].ansible_host }}:9100  # {{ host }}
+{% endfor %}
+{% for host in groups['prestashop'] %}
+          - {{ hostvars[host].ansible_host }}:9100  # {{ host }}
+{% endfor %}
+{% for host in groups['database'] %}
+          - {{ hostvars[host].ansible_host }}:9100  # {{ host }}
+{% endfor %}
+
+  - job_name: 'blackbox_specif'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://{{ hostvars['wp1'].ansible_host }}/  # Wordpress
+          - http://{{ hostvars['ps1'].ansible_host }}/eshop  # PrestaShop
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'mysql_exporter'
+    static_configs:
+      - targets:
+          - {{ hostvars['db1'].ansible_host }}:9104
+
+  - job_name: 'keepalived'
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+{% for host in groups['loadbalancers'] %}
+          - {{ hostvars[host].ansible_host }}:9165  # {{ host }}
+{% endfor %}
+
+  - job_name: 'nginx'
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+{% for host in groups['loadbalancers'] %}
+          - {{ hostvars[host].ansible_host }}:9113  # {{ host }}
+{% endfor %}
+
+  - job_name: 'apache'
+    static_configs:
+      - targets:
+          - {{ hostvars['wp1'].ansible_host }}:9117  # Wordpress
+          - {{ hostvars['ps1'].ansible_host }}:9117  # Prestashop
+
+  - job_name: 'blackbox-vip'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://{{ hostvars['localhost']['vip_address'] }}/eshop
+          - http://{{ hostvars['localhost']['vip_address'] }}/
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115

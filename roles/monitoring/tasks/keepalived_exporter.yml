@@ -1,0 +1,23 @@
+- name: Download keepalived_exporter
+  get_url:
+    url: "https://github.com/mehdy/keepalived-exporter/releases/download/v1.3.0/keepalived-exporter-1.3.0.linux-amd64.tar.gz"
+    dest: /tmp/keepalived_exporter.tar.gz
+
+- name: Extract keepalived_exporter
+  unarchive:
+    src: /tmp/keepalived_exporter.tar.gz
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Create systemd unit for keepalived_exporter
+  template:
+    src: keepalived_exporter.service.j2
+    dest: /etc/systemd/system/keepalived_exporter.service
+  notify: restart keepalived_exporter
+
+- name: Start keepalived_exporter
+  systemd:
+    name: keepalived_exporter
+    enabled: true
+    state: started

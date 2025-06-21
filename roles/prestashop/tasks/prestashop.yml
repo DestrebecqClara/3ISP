@@ -1,0 +1,55 @@
+- apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: true
+  loop:
+    - apache2
+    - php
+    - php-curl
+    - php-fpm
+    - php-bcmath
+    - php-gd
+    - php-soap
+    - php-zip
+    - php-mbstring
+    - php-mysqlnd
+    - php-xml
+    - php-intl
+    - unzip
+
+- file:
+    path: "{{ prestashop_install_dir }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- get_url:
+    url: https://github.com/PrestaShop/PrestaShop/releases/download/8.2.1/prestashop_8.2.1.zip
+    dest: /tmp/prestashop.zip
+    mode: '0644'
+
+- file:
+    path: /tmp/prestashop_extracted
+    state: directory
+    mode: '0755'
+
+- unarchive:
+    src: /tmp/prestashop.zip
+    dest: /tmp/prestashop_extracted
+    remote_src: yes
+
+- copy:
+    src: /tmp/prestashop_extracted/
+    dest: "{{ prestashop_install_dir }}/"
+    remote_src: yes
+    owner: www-data
+    group: www-data
+
+- file:
+    path: "{{ prestashop_install_dir }}"
+    recurse: true
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'

@@ -1,0 +1,41 @@
+
+- name: Ensure nginx conf.d directory exists
+  file:
+    path: /etc/nginx/conf.d
+    state: directory
+    mode: '0755'
+
+- name: Ensure stub_status is configured
+  template:
+    src: stub_status.conf.j2
+    dest: /etc/nginx/conf.d/stub_status.conf
+  notify: reload nginx
+
+- name: Download nginx_exporter
+  get_url:
+    url: "https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/v1.4.1/nginx-prometheus-exporter_1.4.1_linux_amd64.tar.gz"
+    dest: /tmp/nginx_exporter.tar.gz
+
+- name: Extract nginx_exporter
+  unarchive:
+    src: /tmp/nginx_exporter.tar.gz
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Deploy nginx_exporter systemd unit
+  template:
+    src: nginx_exporter.service.j2
+    dest: /etc/systemd/system/nginx_exporter.service
+
+- name: Deploy nginx_exporter socket
+  template:
+    src: nginx_exporter.socket.j2
+    dest: /etc/systemd/system/nginx_exporter.socket
+
+- name: Reload systemd and start nginx_exporter
+  systemd:
+    daemon_reload: true
+    name: nginx_exporter.socket
+    enabled: true
+    state: started

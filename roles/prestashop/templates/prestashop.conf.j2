@@ -1,0 +1,14 @@
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName {{ prestashop_site_url }}
+    DocumentRoot {{ prestashop_install_path }}
+
+    <Directory {{ prestashop_install_path }}>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/prestashop_error.log
+    CustomLog ${APACHE_LOG_DIR}/prestashop_access.log combined
+</VirtualHost>

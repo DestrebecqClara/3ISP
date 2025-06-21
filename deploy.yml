@@ -1,0 +1,67 @@
+- name: Définir VIP
+  hosts: localhost
+  gather_facts: false
+  vars:
+    network_cidr: 192.168.27.0/24
+  tasks:
+    - name: Calculer la dernière IP utilisable
+      set_fact:
+        vip_address: "{{ network_cidr | ipaddr('last_usable') }}"
+
+    - debug:
+        msg: "VIP dynamique attribuée : {{ vip_address }}"
+
+
+
+- name: Générer mdp fort mysql
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - set_fact:
+        wordpress_db_password: "{{ lookup('password', '/dev/null', length=20, chars='ascii_letters,digits') }}"
+
+    - debug:
+        msg: "MDP générée : {{ wordpress_db_password }}"
+
+#- name: Déployer les loadbalancers
+#  hosts: loadbalancers
+#  become: yes
+#  vars:
+#    vip_address: "{{ hostvars['localhost']['vip_address'] }}"
+#  roles:
+#    - loadbalancer
+#
+#- name: Create WordPress and PrestaShop databases and users
+#  hosts: database
+#  become: yes
+#  vars:
+#    mariadb_root_password: "root"
+#    users:
+#      - name: "wp_user"
+#        password: "{{ wordpress_db_password }}"
+#        host: "%"
+#        priv: "*.*:ALL"
+#      - name: "ps_user"
+#        password: "ps_password"
+#        host: "%"
+#        priv: "*.*:ALL"
+#  roles:
+#    - database
+#
+#- name: Deployer prestashop
+#  hosts: prestashop
+#  become: yes
+#  roles:
+#    - prestashop
+#
+#- name: Déployer wordpress
+#  hosts: wordpress
+#  become: yes
+#  roles:
+#    - wordpress
+
+- name: Deployer le monitoring
+  hosts: all
+  become: yes
+  roles:
+    - monitoring
