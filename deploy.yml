@@ -23,42 +23,42 @@
     - debug:
         msg: "MDP générée : {{ wordpress_db_password }}"
 
-#- name: Déployer les loadbalancers
-#  hosts: loadbalancers
-#  become: yes
-#  vars:
-#    vip_address: "{{ hostvars['localhost']['vip_address'] }}"
-#  roles:
-#    - loadbalancer
-#
-#- name: Create WordPress and PrestaShop databases and users
-#  hosts: database
-#  become: yes
-#  vars:
-#    mariadb_root_password: "root"
-#    users:
-#      - name: "wp_user"
-#        password: "{{ wordpress_db_password }}"
-#        host: "%"
-#        priv: "*.*:ALL"
-#      - name: "ps_user"
-#        password: "ps_password"
-#        host: "%"
-#        priv: "*.*:ALL"
-#  roles:
-#    - database
-#
-#- name: Deployer prestashop
-#  hosts: prestashop
-#  become: yes
-#  roles:
-#    - prestashop
-#
-#- name: Déployer wordpress
-#  hosts: wordpress
-#  become: yes
-#  roles:
-#    - wordpress
+- name: Déployer les loadbalancers
+  hosts: loadbalancers
+  become: yes
+  vars:
+    vip_address: "{{ hostvars['localhost']['vip_address'] }}"
+  roles:
+    - loadbalancer
+
+- name: Create WordPress and PrestaShop databases and users
+  hosts: database
+  become: yes
+  vars:
+    mariadb_root_password: "root"
+    users:
+      - name: "wp_user"
+        password: "{{ wordpress_db_password }}"
+        host: "%"
+        priv: "*.*:ALL"
+      - name: "ps_user"
+        password: "ps_password"
+        host: "%"
+        priv: "*.*:ALL"
+  roles:
+    - database
+
+- name: Deployer prestashop
+  hosts: prestashop
+  become: yes
+  roles:
+    - prestashop
+
+- name: Déployer wordpress
+  hosts: wordpress
+  become: yes
+  roles:
+    - wordpress
 
 - name: Deployer le monitoring
   hosts: all
