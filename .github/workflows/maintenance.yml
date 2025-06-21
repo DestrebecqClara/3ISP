@@ -15,5 +15,4 @@ jobs:
           python3 -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
-#          ansible-lint maintenance.yml
           ansible-playbook -i inventory.yml maintenance.yml
