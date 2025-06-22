@@ -8,7 +8,7 @@
   template:
     src: stub_status.conf.j2
     dest: /etc/nginx/conf.d/stub_status.conf
-  notify: reload nginx
+  notify: Reload Nginx
 
 - name: Download nginx_exporter archive
   get_url:

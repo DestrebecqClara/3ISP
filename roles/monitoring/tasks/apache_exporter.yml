@@ -14,7 +14,7 @@
   template:
     src: apache_exporter.service.j2
     dest: /etc/systemd/system/apache_exporter.service
-  notify: restart apache_exporter
+  notify: Restart Apache Exporter
 
 - name: Start and enable apache_exporter service
   systemd:

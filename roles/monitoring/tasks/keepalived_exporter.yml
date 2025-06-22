@@ -14,7 +14,7 @@
   template:
     src: keepalived_exporter.service.j2
     dest: /etc/systemd/system/keepalived_exporter.service
-  notify: restart keepalived_exporter
+  notify: Restart Keepalived Exporter
 
 - name: Start and enable keepalived_exporter service
   systemd:

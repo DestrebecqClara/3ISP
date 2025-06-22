@@ -14,7 +14,7 @@
   template:
     src: mysql_exporter.service.j2
     dest: /etc/systemd/system/mysql_exporter.service
-  notify: restart mysql_exporter
+  notify: Restart Mysql Exporter
 
 - name: Start and enable mysql_exporter service
   systemd:
