@@ -8,8 +8,7 @@ skip_list:
   - no-changed-when
   - command-instead-of-shell
   - name-casing
-  - yaml-truthy
-  - yaml-new-line-at-end-of-file
-  - yaml-comments
-  - yaml-line-length
   - yaml[truthy]
+  - yaml[new-line-at-end-of-file]
+  - yaml[comments]
+  - yaml[line-length]
