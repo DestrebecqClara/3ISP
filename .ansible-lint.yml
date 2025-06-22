@@ -1,0 +1,10 @@
+skip_list:
+  - name
+  - fqcn
+  - var-naming
+  - risky-file-permissions
+  - package-latest
+  - no-handler
+  - no-changed-when
+  - command-instead-of-shell
+  - name-casing
