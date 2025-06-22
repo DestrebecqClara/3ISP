@@ -1,7 +1,4 @@
-# Ansible DunderMifflin
-
-## Schéma de l'infrastructure
-
+# Projet ansible 
 
 ## Prérequis
 
