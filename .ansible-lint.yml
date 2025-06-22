@@ -12,3 +12,4 @@ skip_list:
   - yaml-new-line-at-end-of-file
   - yaml-comments
   - yaml-line-length
+  - yaml[truthy]
