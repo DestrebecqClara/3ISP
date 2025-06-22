@@ -1,14 +1,66 @@
+- name: Allow port 9104/tcp through UFW firewall
+  ufw:
+    rule: allow
+    port: 9104
+    proto: tcp
+
+- name: Allow port 9100/tcp through UFW firewall
+  ufw:
+    rule: allow
+    port: 9100
+    proto: tcp
+
 - name: Download mysqld_exporter archive
   get_url:
     url: "https://github.com/prometheus/mysqld_exporter/releases/download/v0.15.0/mysqld_exporter-0.15.0.linux-amd64.tar.gz"
     dest: /tmp/mysql_exporter.tar.gz
 
+- name: Create temporary directory for mysql_exporter
+  file:
+    path: /usr/local/bin/mysql_exporter_tmp
+    state: directory
+    mode: '0755'
+
 - name: Extract mysqld_exporter archive
   unarchive:
     src: /tmp/mysql_exporter.tar.gz
-    dest: /usr/local/bin/
+    dest: /usr/local/bin/mysql_exporter_tmp
     remote_src: yes
     extra_opts: [--strip-components=1]
+
+- name: Move mysqld_exporter binary to /usr/local/bin
+  copy:
+    src: /usr/local/bin/mysql_exporter_tmp/mysqld_exporter
+    dest: /usr/local/bin/mysqld_exporter
+    remote_src: yes
+    mode: '0755'
+
+- name: Remove temporary directory
+  file:
+    path: /usr/local/bin/mysql_exporter_tmp
+    state: absent
+
+- name: Create .my.cnf for mysqld_exporter
+  copy:
+    dest: /etc/mysqld_exporter.cnf
+    mode: '0600'
+    owner: exporter
+    group: exporter
+    content: |
+      [client]
+      user=ansible
+      password=ansible_password
+
+- name: Create user MySQL for mysqld_exporter
+  mysql_user:
+    name: exporter
+    password: exporter_password
+    priv: "*.*:PROCESS,REPLICATION CLIENT,SHOW DATABASES"
+    host: "localhost"
+    state: present
+    login_user: ansible
+    login_password: "ansible_password"
+
 
 - name: Create systemd unit file for mysql_exporter
   template:

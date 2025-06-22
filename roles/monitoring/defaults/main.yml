@@ -9,6 +9,9 @@ prometheus_data_dir: /var/lib/prometheus
 grafana_version: "10.4.2"
 prometheus_dir: /opt/prometheus
 
+blackbox_user: exporter
+
+
 exporter_ports:
   node_exporter: 9100
   nginx_exporter: 9113

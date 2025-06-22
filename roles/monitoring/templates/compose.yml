@@ -32,3 +32,12 @@ services:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
     ports:
       - "9093:9093"
+
+  blackbox_exporter:
+    image: prom/blackbox-exporter:v0.22.0
+    ports:
+      - "9115:9115"
+    command:
+      - '--config.file=/etc/blackbox_exporter/config.yml'
+    volumes:
+      - ./blackbox_exporter.yml:/etc/blackbox_exporter/config.yml

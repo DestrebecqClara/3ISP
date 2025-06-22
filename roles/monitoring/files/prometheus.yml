@@ -19,8 +19,8 @@ scrape_configs:
       module: [http_2xx]
     static_configs:
       - targets:
-          - http://192.168.27.131/  # Wordpress
-          - http://192.168.27.132/eshop  # PrestaShop
+          - http://192.168.27.156/  # Wordpress
+          - http://192.168.27.157/eshop  # PrestaShop
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

@@ -11,53 +11,53 @@
     - debug:
         msg: "Assigned dynamic VIP: {{ vip_address }}"
 
-- name: Generate strong MySQL password for WordPress
-  hosts: localhost
-  gather_facts: false
-  tasks:
-    - name: Generate random password
-      set_fact:
-        wordpress_db_password: "{{ lookup('password', '/dev/null', length=20, chars='ascii_letters,digits') }}"
-
-    - debug:
-        msg: "Generated password: {{ wordpress_db_password }}"
-
-- name: Deploy Load Balancers
-  hosts: loadbalancers
-  become: yes
-  vars:
-    vip_address: "{{ hostvars['localhost']['vip_address'] }}"
-  roles:
-    - loadbalancer
-
-- name: Create WordPress and PrestaShop databases and users
-  hosts: database
-  become: yes
-  vars:
-    mariadb_root_password: "root"
-    users:
-      - name: "wp_user"
-        password: "{{ wordpress_db_password }}"
-        host: "%"
-        priv: "*.*:ALL"
-      - name: "ps_user"
-        password: "ps_password"
-        host: "%"
-        priv: "*.*:ALL"
-  roles:
-    - database
-
-- name: Deploy PrestaShop
-  hosts: prestashop
-  become: yes
-  roles:
-    - prestashop
-
-- name: Deploy WordPress
-  hosts: wordpress
-  become: yes
-  roles:
-    - wordpress
+#- name: Generate strong MySQL password for WordPress
+#  hosts: localhost
+#  gather_facts: false
+#  tasks:
+#    - name: Generate random password
+#      set_fact:
+#        wordpress_db_password: "{{ lookup('password', '/dev/null', length=20, chars='ascii_letters,digits') }}"
+#
+#    - debug:
+#        msg: "Generated password: {{ wordpress_db_password }}"
+#
+#- name: Deploy Load Balancers
+#  hosts: loadbalancers
+#  become: yes
+#  vars:
+#    vip_address: "{{ hostvars['localhost']['vip_address'] }}"
+#  roles:
+#    - loadbalancer
+#
+#- name: Create WordPress and PrestaShop databases and users
+#  hosts: database
+#  become: yes
+#  vars:
+#    mariadb_root_password: "root"
+#    users:
+#      - name: "wp_user"
+#        password: "{{ wordpress_db_password }}"
+#        host: "%"
+#        priv: "*.*:ALL"
+#      - name: "ps_user"
+#        password: "ps_password"
+#        host: "%"
+#        priv: "*.*:ALL"
+#  roles:
+#    - database
+#
+#- name: Deploy PrestaShop
+#  hosts: prestashop
+#  become: yes
+#  roles:
+#    - prestashop
+#
+#- name: Deploy WordPress
+#  hosts: wordpress
+#  become: yes
+#  roles:
+#    - wordpress
 
 - name: Deploy Monitoring Stack
   hosts: all

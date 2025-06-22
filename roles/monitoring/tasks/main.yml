@@ -13,6 +13,10 @@
   include_tasks: apache_exporter.yml
   when: "'wordpress' in group_names or 'prestashop' in group_names"
 
+- name: Install blackbox_exporter on Wordpress and Prestashop nodes
+  include_tasks: blackbox_exporter.yml
+  when: "'wordpress' in group_names or 'prestashop' in group_names"
+
 - name: Install nginx_exporter on Load Balancer nodes
   include_tasks: nginx_exporter.yml
   when: "'loadbalancers' in group_names"
