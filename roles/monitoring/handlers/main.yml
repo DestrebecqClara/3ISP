@@ -1,44 +1,44 @@
-- name: restart prometheus
+- name: Restart Prometheus
   community.docker.docker_compose_v2:
     project_src: "{{ prometheus_dir }}"
     state: restarted
 
-- name: restart node_exporter
+- name: Restart Node Exporter
   systemd:
     name: node_exporter
     state: restarted
     enabled: yes
     daemon_reload: yes
 
-- name: restart apache_exporter
+- name: Restart Apache Exporter
   systemd:
     name: apache_exporter
     state: restarted
     enabled: yes
     daemon_reload: yes
 
-- name: restart nginx_exporter
+- name: Restart Nginx Exporter
   systemd:
     name: nginx_exporter
     state: restarted
     enabled: yes
     daemon_reload: yes
 
-- name: restart mysql_exporter
+- name: Restart MySQL Exporter
   systemd:
     name: mysql_exporter
     state: restarted
     enabled: yes
     daemon_reload: yes
 
-- name: restart keepalived_exporter
+- name: Restart Keepalived Exporter
   systemd:
     name: keepalived_exporter
     state: restarted
     enabled: yes
     daemon_reload: yes
 
-- name: reload nginx
+- name: Reload Nginx
   systemd:
     name: nginx
     state: reloaded

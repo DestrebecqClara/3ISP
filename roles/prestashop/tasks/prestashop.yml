@@ -1,7 +1,8 @@
-- apt:
+- name: Install required packages for PrestaShop
+  apt:
     name: "{{ item }}"
     state: latest
-    update_cache: true
+    update_cache: yes
   loop:
     - apache2
     - php
@@ -17,38 +18,44 @@
     - php-intl
     - unzip
 
-- file:
+- name: Ensure PrestaShop install directory exists
+  file:
     path: "{{ prestashop_install_dir }}"
     state: directory
     owner: www-data
     group: www-data
     mode: '0755'
 
-- get_url:
+- name: Download PrestaShop archive
+  get_url:
     url: https://github.com/PrestaShop/PrestaShop/releases/download/8.2.1/prestashop_8.2.1.zip
     dest: /tmp/prestashop.zip
     mode: '0644'
 
-- file:
+- name: Ensure temporary extraction directory exists
+  file:
     path: /tmp/prestashop_extracted
     state: directory
     mode: '0755'
 
-- unarchive:
+- name: Extract PrestaShop archive
+  unarchive:
     src: /tmp/prestashop.zip
     dest: /tmp/prestashop_extracted
     remote_src: yes
 
-- copy:
+- name: Copy extracted files to installation directory
+  copy:
     src: /tmp/prestashop_extracted/
     dest: "{{ prestashop_install_dir }}/"
     remote_src: yes
     owner: www-data
     group: www-data
 
-- file:
+- name: Set permissions recursively on PrestaShop directory
+  file:
     path: "{{ prestashop_install_dir }}"
-    recurse: true
+    recurse: yes
     state: directory
     owner: www-data
     group: www-data

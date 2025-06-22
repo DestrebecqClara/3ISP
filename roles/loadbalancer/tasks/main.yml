@@ -1,5 +1,5 @@
-- name: install keepalived
+- name: Install Keepalived
   include_tasks: keepalived.yml
 
-- name: install nginx
+- name: Install Nginx
   include_tasks: nginx.yml

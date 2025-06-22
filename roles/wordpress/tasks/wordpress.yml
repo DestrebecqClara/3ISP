@@ -1,4 +1,5 @@
-- apt:
+- name: Install required packages for WordPress
+  apt:
     name:
       - apache2
       - php
@@ -11,23 +12,27 @@
       - curl
     update_cache: yes
 
-- file:
+- name: Ensure WordPress install directory exists
+  file:
     path: "{{ wordpress_install_path }}"
     state: directory
     owner: www-data
     group: www-data
     mode: '0755'
 
-- get_url:
+- name: Download WP-CLI
+  get_url:
     url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     dest: /usr/local/bin/wp
     mode: '0755'
 
-- shell: wp core download --allow-root --path={{ wordpress_install_path }}
+- name: Download WordPress core
+  shell: wp core download --allow-root --path={{ wordpress_install_path }}
   args:
     creates: "{{ wordpress_install_path }}/wp-config-sample.php"
 
-- shell: >
+- name: Create WordPress config file
+  shell: >
     wp config create
     --dbname={{ wordpress_db_name }}
     --dbuser={{ wordpress_db_user }}
@@ -38,10 +43,11 @@
   args:
     creates: "{{ wordpress_install_path }}/wp-config.php"
 
-- shell: |
+- name: Install WordPress core
+  shell: |
     wp core install \
       --url="{{ wordpress_site_url }}" \
-      --title="Mon Site WordPress" \
+      --title="My WordPress Site" \
       --admin_user=admin \
       --admin_password=admin123 \
       --admin_email=admin@example.com \
@@ -51,14 +57,15 @@
     creates: "{{ wordpress_install_path }}/.installed"
   become: true
 
-
-- file:
+- name: Set ownership for WordPress directory
+  file:
     path: "{{ wordpress_install_path }}"
     state: directory
     recurse: yes
     owner: www-data
     group: www-data
 
-- service:
+- name: Restart Apache to apply changes
+  service:
     name: apache2
     state: restarted

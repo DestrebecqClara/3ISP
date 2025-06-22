@@ -1,5 +1,5 @@
-- name: install wordpress
+- name: Install WordPress
   include_tasks: wordpress.yml
 
-- name: deploy vhost
+- name: Deploy virtual host configuration
   include_tasks: virtualhost.yml

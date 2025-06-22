@@ -1,4 +1,4 @@
-- name: Créer le répertoire Prometheus
+- name: Create Prometheus directory
   file:
     path: "{{ prometheus_dir }}"
     state: directory
@@ -7,23 +7,23 @@
     group: root
     mode: '0755'
 
-- name: Copier le compose.yml
+- name: Copy docker-compose.yml
   template:
     src: compose.yml
     dest: "{{ prometheus_dir }}/compose.yml"
 
-- name: Générer prometheus.yml depuis le template
+- name: Generate prometheus.yml from template
   template:
     src: prometheus.yml.j2
     dest: "{{ prometheus_dir }}/prometheus.yml"
   notify: restart prometheus
 
-- name: Copier le fichier alert.rules.yml
+- name: Copy alert.rules.yml file
   copy:
     src: alert.rules.yml
     dest: "{{ prometheus_dir }}/alert.rules.yml"
 
-- name: Copier le dossier Alertmanager
+- name: Copy Alertmanager directory
   copy:
     src: alertmanager/
     dest: "{{ prometheus_dir }}/alertmanager/"
@@ -31,7 +31,7 @@
     owner: root
     group: root
 
-- name: Créer le dossier grafana
+- name: Create Grafana directory
   file:
     path: "{{ prometheus_dir }}/grafana"
     state: directory
@@ -39,10 +39,9 @@
     group: 472
     mode: '0755'
 
-- name: Lancer Prometheus Stack avec Docker Compose
+- name: Start Prometheus stack with Docker Compose
   community.docker.docker_compose_v2:
     project_src: "{{ prometheus_dir }}"
     files:
       - compose.yml
     state: restarted
-

@@ -1,18 +1,30 @@
-name: Maintenance
+name: "Scheduled Maintenance"
 
 on:
   schedule:
-    - cron: '0 4 * * *'
+    - cron: '0 4 * * *'  # Runs every day at 04:00 UTC
 
 jobs:
-  deploy:
-    name: Maintenance
+  maintenance:
+    name: "Scheduled Maintenance Job"
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v3
-      - run: |
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup virtual environment and install dependencies
+        run: |
           python3 -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
+
+      - name: Run Ansible Linter
+        run: |
+          source .venv/bin/activate
+          ansible-lint maintenance.yml
+
+      - name: Run Ansible maintenance playbook
+        run: |
+          source .venv/bin/activate
           ansible-playbook -i inventory.yml maintenance.yml

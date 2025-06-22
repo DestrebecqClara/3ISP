@@ -1,9 +1,9 @@
-- name: restart keepalived
+- name: Restart Keepalived
   service:
     name: keepalived
     state: restarted
 
-- name: restart nginx
+- name: Restart Nginx
   service:
     name: nginx
     state: restarted

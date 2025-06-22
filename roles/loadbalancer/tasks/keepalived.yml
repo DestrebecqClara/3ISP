@@ -1,12 +1,13 @@
-- apt:
+- name: Install Keepalived
+  apt:
     name:
       - keepalived
     state: present
     update_cache: yes
 
-- template:
+- name: Deploy keepalived configuration
+  template:
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
     mode: '0644'
-  notify: restart keepalived
-
+  notify: Restart Keepalived

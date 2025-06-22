@@ -1,28 +1,28 @@
-- template:
+- name: Deploy WordPress Apache configuration
+  template:
     src: wordpress.conf.j2
     dest: /etc/apache2/sites-available/wordpress.conf
     mode: '0644'
-  notify: restart apache2
+  notify: Reload apache2 service
 
-- command: a2ensite wordpress
-  args:
+- name: Enable WordPress site
+  command:
+    cmd: a2ensite wordpress
     creates: /etc/apache2/sites-enabled/wordpress.conf
-  notify: restart apache2
+  notify: Reload apache2 service
 
-
-- command: a2dissite 000-default
-  args:
+- name: Disable default site
+  command:
+    cmd: a2dissite 000-default
     removes: /etc/apache2/sites-enabled/000-default.conf
-  notify: restart apache2
+  notify: Reload apache2 service
 
+- name: Enable Apache rewrite module
+  command: a2enmod rewrite
+  notify: Reload apache2 service
 
-- command: a2enmod rewrite
-  notify: restart apache2
-
-
-- service:
+- name: Ensure Apache is started and enabled
+  service:
     name: apache2
     state: started
     enabled: true
-
-

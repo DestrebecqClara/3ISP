@@ -31,5 +31,3 @@ all:
       hosts:
         db1:
           ansible_host: 192.168.27.158
-
-
