@@ -6,7 +6,7 @@
   tasks:
     - name: Calculate last usable IP address in network
       set_fact:
-        vip_address: "{{ network_cidr | ipaddr('last_usable') }}"
+        vip_address: "{{ network_cidr | ansible.utils.ipaddr('last_usable') }}"
 
     - debug:
         msg: "Assigned dynamic VIP: {{ vip_address }}"
